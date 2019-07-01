@@ -17018,3 +17018,8 @@ body {
   vertical-align: middle;
 }
 
+.card-img-top {
+  width: 208px;
+  height: 208px;
+}
+
