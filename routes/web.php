@@ -37,3 +37,6 @@ Route::get('email/resend', 'Auth\VerificationController@resend')->name('verifica
 
 // 用户相关
 Route::resource('users', 'UsersController', ['only' => ['show', 'update', 'edit']]);
+
+// 话题相关
+Route::resource('topics', 'TopicsController');

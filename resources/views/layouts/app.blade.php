@@ -30,6 +30,10 @@
     @include('layouts._footer')
   </div>
 
+  @if (config('app.debug'))
+    @include('sudosu::user-selector')
+  @endif
+
   <!-- Script -->
   <script src="{{ mix('js/app.js') }}"></script>
 
