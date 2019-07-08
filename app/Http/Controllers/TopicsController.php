@@ -60,6 +60,8 @@ class TopicsController extends Controller
 
     public function edit(Topic $topic)
     {
+        $this->authorize('update', $topic);
+
         $categories = Category::all();
 
         return view('topics.create_and_edit', compact('topic', 'categories'));
@@ -67,8 +69,10 @@ class TopicsController extends Controller
 
     public function update(Request $request, Topic $topic)
     {
+        $this->authorize('update', $topic);
+
         $request->validate([
-            'title' => 'required|min2',
+            'title' => 'required|min:2',
             'body' => 'required|min:3',
             'category_id' => 'required|numeric',
         ], [
@@ -76,13 +80,18 @@ class TopicsController extends Controller
             'body.min' => '文章内容必须至少三个字符',
         ]);
 
-        // Auth::user()->topics()->create([]);
+        $topic->update($request->all());
 
-        $topic->fill($request->all());
-        $topic->user_id = Auth::id();
-        $topic->save();
+        return redirect()->route('topics.show', $topic->id)->with('success', '更新成功！');
+    }
 
-        return redirect()->route('topics.show', $topic->id)->with('success', '帖子创建成功！');
+    public function destroy(Topic $topic)
+    {
+        $this->authorize('destroy', $topic);
+
+        $topic->delete();
+
+        return redirect()->route('topics.index')->with('success', '成功删除！');
     }
 
     public function uploadImage(Request $request, ImageUploadHandler $uploader)
