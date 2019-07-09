@@ -17,4 +17,10 @@ class Reply extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeRecent($query)
+    {
+        // 按照创建时间排序
+        return $query->orderBy('created_at', 'desc');
+    }
 }
