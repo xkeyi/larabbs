@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\TopicReplied;
 use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
@@ -20,6 +21,9 @@ class Reply extends Model
             // $reply->topic->increment('reply_count', 1);
             $reply->topic->reply_count = $reply->topic->replies->count();
             $reply->topic->save();
+
+            // 通知话题作者又新的评论
+            $reply->topic->user->notify(new TopicReplied($reply));
         });
     }
 
