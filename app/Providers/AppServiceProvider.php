@@ -15,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (config('app.debug')) {
+        // if (config('app.debug')) {
+        if (app()->isLocal()) {
             $this->app->register('VIACreative\SudoSu\ServiceProvider');
         }
     }
