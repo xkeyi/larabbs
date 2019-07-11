@@ -19,11 +19,14 @@ class Reply extends Model
 
         static::created(function ($reply) {
             // $reply->topic->increment('reply_count', 1);
-            $reply->topic->reply_count = $reply->topic->replies->count();
-            $reply->topic->save();
+            $reply->topic->updateReplyCount();
 
             // 通知话题作者又新的评论
             $reply->topic->user->notify(new TopicReplied($reply));
+        });
+
+        static::deleted(function ($reply) {
+            $reply->topic->updateReplyCount();
         });
     }
 
