@@ -1,5 +1,8 @@
 <?php
 return [
+    // 是否需要真实发送短信
+    'send_enabled' => env('SEND_SMS_ENABLED', false),
+
     // HTTP 请求的超时时间（秒）
     'timeout' => 5.0,
 
