@@ -61,6 +61,18 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            // 设置默认头像
+            if (empty($user->avatar)) {
+                $user->avatar = 'https://cdn.learnku.com/uploads/images/201710/30/1/TrJS40Ey5k.png';
+            }
+        });
+    }
+
     public function topics()
     {
         return $this->hasMany(Topic::class);
