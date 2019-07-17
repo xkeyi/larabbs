@@ -15,7 +15,7 @@ class VerificationCodesController extends Controller
 
         // if (!app()->environment('production')) {
         if (!config('easysms.send_enabled')) {
-            $code = 1234;
+            $code = '1234';
         } else {
             // 生成 4 位随机数，左侧补 0
             $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
