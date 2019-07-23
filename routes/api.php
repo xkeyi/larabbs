@@ -23,6 +23,7 @@ $api->version('v1', [
         return response('this is version v1');
     });
 
+    /** 登录相关 */
     $api->group([
         'middleware' => 'api.throttle',
         'limit' => config('api.rate_limits.sign.limit'),
@@ -54,14 +55,19 @@ $api->version('v1', [
             ->name('api.authorizations.destroy');
     });
 
+    /** 其他 */
     $api->group([
         'middleware' => 'api.throttle',
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        // 游客可以访问的接口
+        /** 游客可以访问的接口 */
+        // 分类
+        $api->get('categories', 'CategoriesController@index')->name('api.categories.index');
 
-        // 需要 token 验证的接口
+        /** 需要 token 验证的接口 */
+        // 中间件也可以使用 auth:api，但是这个验证不通过时返回 500 而不是 401
+        // 在控制器中获取用户 auth:api(框架自带): auth('api')->user();api.auth(dingo/api)：$this->user()
         $api->group(['middleware' => 'api.auth'], function ($api) {
             // 当前登录用户信息
             $api->get('user', 'UsersController@me')->name('api.user.show');
