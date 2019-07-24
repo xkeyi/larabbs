@@ -65,6 +65,11 @@ $api->version('v1', [
         // 分类
         $api->get('categories', 'CategoriesController@index')->name('api.categories.index');
 
+        // 话题
+        $api->get('topics', 'TopicsController@index')->name('api.topics.index');
+        $api->get('topics/{topic}', 'TopicsController@show')->name('api.topics.show');
+        $api->get('users/{user}/topics', 'TopicsController@userIndex')->name('api.users.topics.index');
+
         /** 需要 token 验证的接口 */
         // 中间件也可以使用 auth:api，但是这个验证不通过时返回 500 而不是 401
         // 在控制器中获取用户 auth:api(框架自带): auth('api')->user();api.auth(dingo/api)：$this->user()
@@ -80,6 +85,10 @@ $api->version('v1', [
             $api->post('topics', 'TopicsController@store')->name('api.topics.store');
             $api->patch('topics/{topic}', 'TopicsController@update')->name('api.topics.update');
             $api->delete('topics/{topic}', 'TopicsController@destroy')->name('api.topics.destroy');
+
+            // 回复
+            $api->post('topics/{topic}/replies', 'RepliesController@store')->name('api.topics.replies.store');
+            $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy')->name('api.topics.replies.destroy');
         });
     });
 });
