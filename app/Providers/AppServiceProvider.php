@@ -19,6 +19,15 @@ class AppServiceProvider extends ServiceProvider
         if (app()->isLocal()) {
             $this->app->register('VIACreative\SudoSu\ServiceProvider');
         }
+
+        \API::error(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception) {
+            // abort(404, '404 Not Found');
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404, '404 Not Found');
+        });
+
+        \API::error(function (\Illuminate\Auth\Access\AuthorizationException $exception) {
+            abort(403, $exception->getMessage());
+        });
     }
 
     /**
