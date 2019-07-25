@@ -97,6 +97,7 @@ $api->version('v1', [
             // 当前登录用户消息通知
             $api->get('user/notifications', 'NotificationsController@index')->name('api.user.notifications.index');
             $api->get('user/notifications/stats', 'NotificationsController@stats')->name('api.user.notifications.stats');
+            $api->patch('user/read/notifications', 'NotificationsController@read')->name('api.user.notifications.read');
         });
     });
 });
