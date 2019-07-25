@@ -70,6 +70,10 @@ $api->version('v1', [
         $api->get('topics/{topic}', 'TopicsController@show')->name('api.topics.show');
         $api->get('users/{user}/topics', 'TopicsController@userIndex')->name('api.users.topics.index');
 
+        // 回复
+        $api->get('topics/{topic}/replies', 'RepliesController@index')->name('api.topics.replies.index');
+        $api->get('users/{user}/replies', 'RepliesController@userIndex')->name('api.users.replies.index');
+
         /** 需要 token 验证的接口 */
         // 中间件也可以使用 auth:api，但是这个验证不通过时返回 500 而不是 401
         // 在控制器中获取用户 auth:api(框架自带): auth('api')->user();api.auth(dingo/api)：$this->user()
