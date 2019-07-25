@@ -93,6 +93,9 @@ $api->version('v1', [
             // 回复
             $api->post('topics/{topic}/replies', 'RepliesController@store')->name('api.topics.replies.store');
             $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy')->name('api.topics.replies.destroy');
+
+            // 当前登录用户通知列表
+            $api->get('user/notifications', 'NotificationsController@index')->name('api.user.notifications.index');
         });
     });
 });
