@@ -8,6 +8,10 @@ use App\Http\Requests\Api\SocialAuthorizationRequest;
 use App\Http\Requests\Api\AuthorizationRequest;
 use Socialite;
 use Auth;
+use Psr\Http\Message\ServerRequestInterface;
+use League\OAuth2\Server\AuthorizationServer;
+use Zend\Diactoros\Response as Psr7Response;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 class AuthorizationsController extends Controller
 {
@@ -67,20 +71,13 @@ class AuthorizationsController extends Controller
         return $this->respondWithToken($token);
     }
 
-    public function store(AuthorizationRequest $request)
+    public function store(AuthorizationRequest $request, AuthorizationServer $server, ServerRequestInterface $serverRequest)
     {
-        $username = $request->username;
-
-        filter_var($username, FILTER_VALIDATE_EMAIL) ? $credentials['email'] = $username : $credentials['phone'] = $username;
-
-        $credentials['password'] = $request->password;
-
-        // $token = auth('api')->attempt($credentials);
-        if (!$token = Auth::guard('api')->attempt($credentials)) {
-            return $this->response->errorUnauthorized(trans('auth.failed'));
+        try {
+            return $server->respondToAccessTokenRequest($serverRequest, new Psr7Response)->withStatus(201);
+        } catch (OAuthServerException $e) {
+            return $this->response->errorUnauthorized($e->getMessage());
         }
-
-        return $this->respondWithToken($token);
     }
 
     protected function respondWithToken($token)
@@ -92,15 +89,22 @@ class AuthorizationsController extends Controller
         ])->setStatusCode(201);
     }
 
-    public function update()
+    public function update(AuthorizationServer $server, ServerRequestInterface $serverRequest)
     {
-        $token = Auth::guard('api')->refresh();
-        return $this->respondWithToken($token);
+        try {
+            return $server->respondToAccessTokenRequest($serverRequest, new Psr7Response);
+        } catch (OAuthServerException $e) {
+            return $this->response->errorUnauthorized($e->getMessage());
+        }
     }
 
     public function destroy()
     {
-        Auth::guard('api')->logout();
-        return $this->response->noContent();
+        if (!empty($this->user())) {
+            $this->user()->token()->revoke();
+            return $this->response->noContent();
+        } else {
+            return $this->response->errorUnauthorized('The token is invalid.');
+        }
     }
 }
