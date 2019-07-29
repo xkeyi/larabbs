@@ -77,7 +77,7 @@ class AuthorizationsController extends Controller
 
         // $token = auth('api')->attempt($credentials);
         if (!$token = Auth::guard('api')->attempt($credentials)) {
-            return $this->response->errorUnauthorized('用户名或密码错误');
+            return $this->response->errorUnauthorized(trans('auth.failed'));
         }
 
         return $this->respondWithToken($token);
