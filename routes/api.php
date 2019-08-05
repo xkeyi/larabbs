@@ -95,6 +95,7 @@ $api->version('v1', [
             $api->get('user', 'UsersController@me')->name('api.user.show');
             // 编辑登录用户信息(patch:部分修改资源，提供部分资源信息;put 替换某个资源，需提供完整的资源信息)
             $api->patch('user', 'UsersController@update')->name('api.user.update');
+            $api->put('user', 'UsersController@update')->name('api.user.update');
             // 图片资源上传
             $api->post('images', 'ImagesController@store')->name('api.images.store');
 
