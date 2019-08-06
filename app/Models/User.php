@@ -106,4 +106,13 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 
         $this->notifications->markAsRead();
     }
+
+    public function getAvatarAttribute($value)
+    {
+        if (!\Str::startsWith($value, 'https') && !\Str::startsWith($value, 'http')) {
+            $value = config('app.url') . $value;
+        }
+
+        return $value;
+    }
 }
