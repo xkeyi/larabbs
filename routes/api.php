@@ -87,6 +87,9 @@ $api->version('v1', [
         // 活跃用户
         $api->get('actived/users', 'UsersController@activedIndex')->name('api.actived.users.index');
 
+        // 用户详情
+        $api->get('users/{user}', 'UsersController@show')->name('api.users.show');
+
         /** 需要 token 验证的接口 */
         // 中间件也可以使用 auth:api，但是这个验证不通过时返回 500 而不是 401
         // 在控制器中获取用户 auth:api(框架自带): auth('api')->user();api.auth(dingo/api)：$this->user()
