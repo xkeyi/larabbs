@@ -1,7 +1,7 @@
 <template>
 	<view>
     <view class="margin-top margin-left text-df text-gray">Larabbs 登录</view>
-    <form @submit="login">
+    <form @submit="submit">
       <view class="cu-form-group">
         <view class="title">用户名</view>
         <input placeholder="手机号或邮箱" v-model="username"></input>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+  import {mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -28,6 +29,7 @@
 		},
     computed: {
       formReady() {
+        return true
         return (
           this.username.length >= 3 &&
           this.password.length >= 6
@@ -35,20 +37,51 @@
       }
     },
 		methods: {
-      async login() {
-        console.log('login')
-        await this.$http.post('authorizations', {
+      ...mapActions(['login']),
+      
+      submit() {
+        let params = {
           username: this.username,
           password: this.password
+        }
+        
+        this.attempLogin(params)
+      },
+      async attempLogin(params = {}) {
+        // code 只能使用一次，所以每次单独调用
+        let loginCode = await uni.login({provider: 'weixin'})
+        params.code = loginCode[1].code
+        
+        uni.showLoading({
+            title: '正在登录...'
         })
-        .then(response => {
-          console.log(response)
-        })
-        .then((error) => {
-          console.log(error)
-        })
+        
+        try {
+          await this.login(params)
+          
+          uni.showToast({
+            title: '欢迎回来！',
+            duration: 2000
+          })
+          
+          uni.navigateBack()
+        } catch (e) {
+          if (e.status === 401) {
+            uni.showToast({
+              title: '用户名或密码错误！',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+        }
+        
+        uni.hideLoading()
       }
-		}
+		},
+    onShow() {
+      // 页面打开时使用 code 自动登录一次
+      this.attempLogin()
+    }
 	}
 </script>
 

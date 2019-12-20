@@ -1,6 +1,6 @@
 <template>
 	<view class="page">
-    <view v-if="user.id">
+    <view v-if="isLogged">
       已经登录
     </view>
     <view v-else>
@@ -17,14 +17,19 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
-        user: {}
 			}
 		},
+    computed: {
+      ...mapGetters(['isLogged', 'currentUser'])
+    },
 		methods: {
-		}
+		},
+    onShow() {
+    }
 	}
 </script>
 

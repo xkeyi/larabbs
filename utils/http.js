@@ -26,34 +26,42 @@ http.interceptors.response.use(
       return Promise.reject(error)
     }
     
-    // todo: 统一定义错误处理
-    // switch (error.response.status) {
-    //   case 422:
-    //     let data = error.response.data.errors
-    //     let content = ''
+    // 统一错误处理
+    let errMsg = ''
+    switch (error.response.status) {
+      case 422:
+        let data = error.response.data.errors
 
-    //     Object.keys(data).map(function (key) {
-    //       let value = data[key]
+        Object.keys(data).map(function (key) {
+          let value = data[key]
 
-    //       content = value[0]
-    //     })
-
-    //     Message.error(content)
-    //     break
-    //   case 403:
-    //     Message.error(error.response.data.message || '您没有此操作权限！')
-    //     break
-    //   case 401:
-    //     if (window.location.pathname !== '/auth/login') {
-    //       window.location.href = '/auth/login'
-    //     }
-    //     break
-    //   case 500:
-    //   case 501:
-    //   case 503:
-    //   default:
-    //     Message.error('服务器出了点小问题，程序员小哥哥要被扣工资了~！')
-    // }
+          errMsg = value[0]
+        })
+        break
+      case 403:
+        errMsg = error.response.data.message || '您没有此操作权限！'
+        break
+      case 401:
+        //
+        break
+      case 429:
+        errMsg = error.response.data.message || '请求太过频繁了,请稍后重试！'
+        break
+      case 500:
+      case 501:
+      case 503:
+      default:
+        errMsg = '服务器出了点小问题，程序员小哥哥要被扣工资了~！'
+    }
+    
+    console.log(errMsg)
+    if (errMsg) {
+      uni.showToast({
+         title: errMsg,
+         icon: 'none',
+         duration: 2000
+      })
+    }
     
     return Promise.reject(error.response)
   }
