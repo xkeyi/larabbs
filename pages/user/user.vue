@@ -29,6 +29,10 @@
 		methods: {
 		},
     onShow() {
+      this.$http.get('categories')
+        .then(response => {
+          console.log(response)
+        })
     }
 	}
 </script>

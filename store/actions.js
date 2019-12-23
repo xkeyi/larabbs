@@ -4,7 +4,9 @@ import { isEmpty } from 'lodash'
 export const login = ({ dispatch }, payload) => {
   return http.post('weapp/authorizations', payload)
           .then(response => {
-            console.log(response)
+            uni.setStorageSync('access_token', response.access_token)
+            uni.setStorageSync('access_token_expired_at', new Date().getTime() + response.expires_in * 1000)
+            
             dispatch('setToken', response.access_token)
              
             return Promise.resolve()

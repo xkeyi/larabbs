@@ -5,8 +5,35 @@ const http = new Fly
 //添加请求拦截器
 http.interceptors.request.use(
   (request) => {
-    // 添加配置
-    return request
+    // 从缓存中取出 Token
+    let accessToken = uni.getStorageSync('access_token')
+    let expiredAt = uni.getStorageSync('access_token_expired_at')
+  
+    // 如果 token 过期了，则调用刷新方法
+    if (accessToken && new Date().getTime() > expiredAt) {
+      //锁定当前实例，后续请求会在拦截器外排队
+      http.lock();
+      
+      // 发送一个异步请求,刷新 token
+      return (new Fly).put('http://larabbs6.test/api/v1/authorizations/current', {}, {
+          headers: {
+            Authorization: 'Bearer ' + accessToken
+          }
+        }).then(response => {
+          uni.setStorageSync('access_token', response.data.access_token)
+          uni.setStorageSync('access_token_expired_at', new Date().getTime() + response.data.expires_in * 1000)
+          
+          request.headers['Authorization'] = 'Bearer ' + response.data.access_token
+          
+          return request;
+        }).finally(() => {
+          //解锁后，会继续发起请求队列中的任务
+          http.unlock()
+        })
+    } else {
+      // request.headers["csrfToken"] = csrfToken;
+      request.headers['Authorization'] = 'Bearer ' + accessToken
+    }
   }, 
   (error) => {
     return Promise.reject(error)
@@ -20,8 +47,6 @@ http.interceptors.response.use(
     return response.data
   },
   (error) => {
-    console.log('response error')
-    console.log(error)
     if (!error['response']) {
       return Promise.reject(error)
     }
@@ -54,7 +79,6 @@ http.interceptors.response.use(
         errMsg = '服务器出了点小问题，程序员小哥哥要被扣工资了~！'
     }
     
-    console.log(errMsg)
     if (errMsg) {
       uni.showToast({
          title: errMsg,
@@ -71,7 +95,8 @@ http.interceptors.response.use(
 http.config.baseURL="http://larabbs6.test/api/v1/"
 
 export function setToken (token) {
-  http.config.headers.Authorization = `Bearer ${token}`
+  // console.log(token)
+  // http.config.headers.Authorization = `Bearer ${token}`
 }
 
 export default http
