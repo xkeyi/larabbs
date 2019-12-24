@@ -27650,7 +27650,7 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.setToken = exports.login = void 0;var _http = _interopRequireDefault(__webpack_require__(/*! @/utils/http */ 15));
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.checkUserToken = exports.logout = exports.setUser = exports.loadUser = exports.setToken = exports.login = void 0;var _http = _interopRequireDefault(__webpack_require__(/*! @/utils/http */ 15));
 var _lodash = __webpack_require__(/*! lodash */ 22);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 
 var login = function login(_ref, payload) {var dispatch = _ref.dispatch;
@@ -27664,7 +27664,7 @@ var login = function login(_ref, payload) {var dispatch = _ref.dispatch;
     return Promise.resolve();
   }).
   then(function () {
-    // dispatch('loadUser')
+    dispatch('loadUser');
   });
 };exports.login = login;
 
@@ -27674,6 +27674,55 @@ var setToken = function setToken(_ref2, token) {var commit = _ref2.commit;
 
   return Promise.resolve(token); //keep promise chain
 };exports.setToken = setToken;
+
+var loadUser = function loadUser(_ref3) {var dispatch = _ref3.dispatch;
+  _http.default.get('user').
+  then(function (user) {
+    dispatch('setUser', user);
+  }).
+  catch(function () {
+    // 退出登录
+    console.log('获取当前用户失败了');
+    dispatch('logout');
+  });
+};exports.loadUser = loadUser;
+
+var setUser = function setUser(_ref4, user) {var commit = _ref4.commit;
+  // Commit the mutations
+  commit('SET_USER', user);
+
+  Promise.resolve(user); // keep promise chain
+};exports.setUser = setUser;
+
+var logout = function logout(_ref5) {var dispatch = _ref5.dispatch;
+  _http.default.delete('authorizations/current').
+  then(function () {
+    uni.clearStorage();
+
+    dispatch('setToken', null);
+
+    return Promise.resolve();
+  }).
+  then(function () {
+    dispatch('setUser', {});
+  });
+};exports.logout = logout;
+
+var checkUserToken = function checkUserToken(_ref6) {var dispatch = _ref6.dispatch;
+  // 从缓存中取出 Token
+  uni.getStorage('access_token').
+  then(function (res) {
+    var token = res.data;
+    if ((0, _lodash.isEmpty)(token)) {
+      return Promise.reject('NO_TOKEN');
+    }
+
+    return dispatch('setToken', token); // keep promise chain
+  }).
+  then(function () {
+    dispatch('loadUser');
+  });
+};exports.checkUserToken = checkUserToken;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),

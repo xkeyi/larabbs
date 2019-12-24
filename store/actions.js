@@ -12,7 +12,7 @@ export const login = ({ dispatch }, payload) => {
             return Promise.resolve()
           })
           .then(() => {
-            // dispatch('loadUser')
+            dispatch('loadUser')
           })
 }
 
@@ -21,4 +21,53 @@ export const setToken = ({ commit }, token) => {
   commit('SET_TOKEN', token)
   
   return Promise.resolve(token) //keep promise chain
+}
+
+export const loadUser = ({ dispatch }) => {
+  http.get('user')
+      .then(user => {
+        dispatch('setUser', user)
+      })
+      .catch(() => {
+        // 退出登录
+        console.log('获取当前用户失败了')
+        dispatch('logout')
+      })
+}
+
+export const setUser = ({ commit }, user) => {
+  // Commit the mutations
+  commit('SET_USER', user)
+  
+  Promise.resolve(user) // keep promise chain
+}
+
+export const logout = ( {dispatch }) => {
+  http.delete('authorizations/current')
+      .then(() => {
+        uni.clearStorage()
+        
+        dispatch('setToken', null)
+        
+        return Promise.resolve()
+      })
+      .then(() => {
+        dispatch('setUser', {})
+      })
+}
+
+export const checkUserToken = ({ dispatch }) => {
+  // 从缓存中取出 Token
+  uni.getStorage('access_token')
+    .then(res => {
+      let token = res.data
+      if (isEmpty(token)) {
+        return Promise.reject('NO_TOKEN')
+      }
+      
+      return dispatch('setToken', token) // keep promise chain
+    })
+    .then(() => {
+      dispatch('loadUser')
+    })
 }

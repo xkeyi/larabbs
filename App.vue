@@ -1,20 +1,25 @@
 <script>
+  import { mapActions } from 'vuex'
+  
 	export default {
-		onLaunch: function() {
+		onLaunch() {
 			console.log('App Launch')
-      uni.login({
-        provider: 'weixin',
-        success: function (loginRes) {
-          console.log(loginRes)
-        }
-      });
+      
+      this.syncToken()
 		},
-		onShow: function() {
+		onShow() {
 			console.log('App Show')
 		},
-		onHide: function() {
+		onHide() {
 			console.log('App Hide')
-		}
+		},
+    methods: {
+      ...mapActions(['checkUserToken']),
+      
+      async syncToken() {
+        await this.checkUserToken()
+      }
+    }
 	}
 </script>
 

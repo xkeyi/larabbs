@@ -1,23 +1,24 @@
 <template>
 	<view class="page">
     <view v-if="isLogged">
-      已经登录
+      <view>已经登录</view>
+      <view>姓名：{{ currentUser.name }}</view>
+      <view class="padding">
+      	<button type="button" @click="logout" class="cu-btn block bg-red margin-tb-sm lg">退出登录</button>
+      </view>
     </view>
     <view v-else>
       <navigator url="/pages/auth/auth" hover-class="navigator-hover">
         <button type="default">去登录</button>
       </navigator>
-      
-      <view class="padding">
-      	<button class="cu-btn block bg-blue margin-tb-sm lg" disabled type="">无效状态</button>
-      	<button class="cu-btn block line-blue margin-tb-sm lg" disabled>无效状态</button>
-      </view>
     </view>
 	</view>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
+  import { mapActions } from 'vuex'
+  
 	export default {
 		data() {
 			return {
@@ -27,16 +28,12 @@
       ...mapGetters(['isLogged', 'currentUser'])
     },
 		methods: {
+      ...mapActions(['logout'])
 		},
     onShow() {
-      this.$http.get('categories')
-        .then(response => {
-          console.log(response)
-        })
     }
 	}
 </script>
 
 <style>
-	
 </style>
