@@ -58,9 +58,9 @@ export const logout = ( {dispatch }) => {
 
 export const checkUserToken = ({ dispatch }) => {
   // 从缓存中取出 Token
-  uni.getStorage('access_token')
+  uni.getStorage({key: 'access_token'})
     .then(res => {
-      let token = res.data
+      let token = res[1].data
       if (isEmpty(token)) {
         return Promise.reject('NO_TOKEN')
       }
