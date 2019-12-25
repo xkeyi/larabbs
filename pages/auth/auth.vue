@@ -1,6 +1,6 @@
 <template>
 	<view>
-    <view class="margin-top margin-left text-df text-gray">Larabbs 登录</view>
+    <view class="margin-top margin-left text-gray">Larabbs 登录</view>
     <form @submit="submit">
       <view class="cu-form-group">
         <view class="title">用户名</view>
@@ -12,6 +12,10 @@
       </view>
       
       <view class="padding flex flex-direction">
+        <view class="solid-bottom text-gray margin-bottom-xs">
+        	<text>没有账号？</text>
+          <navigator url="/pages/auth/register" class="inline-block padding-sm text-blue" open-type="redirect" hover-class="navigator-hover">快速注册</navigator>
+        </view>
         <button form-type="submit" class="cu-btn block bg-green shadow lg" :disabled="!formReady" type="">登录</button>
       </view>
     </form>
@@ -20,6 +24,7 @@
 
 <script>
   import { mapActions } from 'vuex'
+  import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -28,8 +33,9 @@
 			}
 		},
     computed: {
+      ...mapGetters(['isLogged']),
+      
       formReady() {
-        return true
         return (
           this.username.length >= 3 &&
           this.password.length >= 6
@@ -66,7 +72,7 @@
           
           uni.navigateBack()
         } catch (e) {
-          if (e.status === 401) {
+          if (e.status === 401 && params.username) {
             uni.showToast({
               title: '用户名或密码错误！',
               icon: 'none',
@@ -79,6 +85,12 @@
       }
 		},
     onShow() {
+      if (this.isLogged) {
+        uni.switchTab({
+          url: '/pages/index/index'
+        });
+      }
+      
       // 页面打开时使用 code 自动登录一次
       this.attempLogin()
     }

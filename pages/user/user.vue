@@ -50,9 +50,27 @@
     </view>
     
     <view v-else>
-      <navigator url="/pages/auth/auth" hover-class="navigator-hover">
-        <button type="default">去登录</button>
-      </navigator>
+      <view class="bg-white">
+        <view class="padding">
+        	<view class="flex justify-center">
+            <view class="cu-avatar round avatar">
+            	<text class="cuIcon-people text-xsl"></text>
+            </view>
+        	</view>
+        </view>
+        
+        <view class="padding-bottom">
+          <view class="flex">
+            <view class="flex-sub text-center">
+            	<view class="solid-bottom text-lg">
+            		<text>您还未登录，</text>
+                <navigator url="/pages/auth/auth" class="inline-block padding-sm text-blue" hover-class="navigator-hover">立即登录</navigator>
+            	</view>
+            </view>
+          </view>
+        </view>
+        
+      </view>
     </view>
 	</view>
 </template>

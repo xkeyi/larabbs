@@ -30,4 +30,7 @@
   	height: 100Vh;
   	width: 100vw;
   }
+  .inline-block {
+    display: inline-block;
+  }
 </style>

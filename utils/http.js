@@ -67,7 +67,7 @@ http.interceptors.response.use(
         errMsg = error.response.data.message || '您没有此操作权限！'
         break
       case 401:
-        //
+        errMsg = error.response.data.message
         break
       case 429:
         errMsg = error.response.data.message || '请求太过频繁了,请稍后重试！'
