@@ -4,7 +4,7 @@
     <form @submit="submit">
       <view class="cu-form-group">
         <view class="title">手机号</view>
-          <input placeholder="输入手机号" v-model="phone"></input>
+          <input placeholder="输入手机号" v-model="phone" :disabled="phoneDisabled"></input>
           <button class='cu-btn bg-green shadow' type="button" @click="getCaptchaCode">获取验证码</button>
       </view>
       
@@ -36,7 +36,7 @@
     			</view>
     		</view>
     		<view class="cu-bar bg-white">
-          <view class="action margin-0 flex-sub  solid-left text-green">确定</view>
+          <view class="action margin-0 flex-sub  solid-left text-green" @click="sendVerificationCode">确定</view>
     		</view>
     	</view>
     </view>
@@ -52,12 +52,16 @@
 		data() {
 			return {
         phone: '',
+        // 手机输入框 disabled
+        phoneDisabled: false,
         // 图片验证码 modal 是否显示
         captchaModalShow: false,
         // 用户输入的验证码
         captchaValue: null,
         // 图片验证码 key 及过期时间
         captcha: {},
+        // 短信验证码 key 及过期时间
+        verificationCode: {},
 				username: '',
         password: ''
 			}
@@ -76,6 +80,14 @@
 		methods: {
       ...mapActions(['login']),
       
+      resetRegister() {
+        this.phone = ''
+        this.phoneDisabled = false
+        this.captchaModalShow = false
+        this.captchaValue = null
+        this.captcha = {}
+        this.verificationCode = {}
+      },
       async getCaptchaCode() {
         if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
           uni.showToast({
@@ -98,6 +110,50 @@
             // 打开 model
             this.captchaModalShow = true
           })
+      },
+      async sendVerificationCode() {
+        if (!this.captchaValue) {
+          uni.showToast({
+             title: '请输入图片验证码',
+             icon: 'none',
+             duration: 2000
+          })
+          return false
+        }
+        
+        // 检查验证码是否过期，重置流程
+        if (new Date().getTime() > new Date(this.captcha.expiredAt).getTime()) {
+          uni.showToast({
+             title: '请输入图片验证码',
+             icon: 'none',
+             duration: 2000
+          })
+          
+          this,resetRegister()
+          return false
+        }
+        
+        try {
+          await this.$http.post('verificationCodes', {
+            captcha_key: this.captcha.key,
+            captcha_code: this.captchaValue
+          })
+          .then(response => {
+            // 记录 key 和过期时间
+            this.verificationCode = {
+              key: response.key,
+              expiredAt: response.expired_at
+            }
+            
+            // 关闭 model
+            this.captchaModalShow = false
+            // 手机输入框 disabled
+            this.phoneDisabled = true
+          })
+        } catch(e) {
+          // 重新获取图片验证码
+          await this.getCaptchaCode()
+        }
       },
       submit() {
         let params = {
