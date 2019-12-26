@@ -71,3 +71,18 @@ export const checkUserToken = ({ dispatch }) => {
       dispatch('loadUser')
     })
 }
+
+export const register = ({ dispatch }, payload) => {
+  return http.post('weapp/users', payload)
+    .then(response => {
+      uni.setStorageSync('access_token', response.access_token)
+      uni.setStorageSync('access_token_expired_at', new Date().getTime() + response.expires_in * 1000)
+      
+      dispatch('setToken', response.access_token)
+       
+      return Promise.resolve()
+    })
+    .then(() => {
+      dispatch('loadUser')
+    })
+}

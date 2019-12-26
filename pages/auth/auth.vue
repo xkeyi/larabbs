@@ -1,6 +1,5 @@
 <template>
-	<view>
-    <view class="margin-top margin-left text-gray">Larabbs 登录</view>
+	<view class="margin-top">
     <form @submit="submit">
       <view class="cu-form-group">
         <view class="title">用户名</view>

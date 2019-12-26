@@ -1,21 +1,26 @@
 <template>
-	<view>
-    <view class="margin-top margin-left text-gray">Larabbs 注册</view>
+	<view class="margin-top">
     <form @submit="submit">
       <view class="cu-form-group">
         <view class="title">手机号</view>
           <input placeholder="输入手机号" v-model="phone" :disabled="phoneDisabled"></input>
           <button class='cu-btn bg-green shadow' type="button" @click="getCaptchaCode">获取验证码</button>
       </view>
+      <view class="cu-form-group">
+        <view class="title">验证码</view>
+        <input placeholder="短信验证码" v-model="verification_code"></input>
+      </view>
       
       <view class="cu-form-group">
-        <view class="title">用户名</view>
-        <input placeholder="手机号或邮箱" v-model="username"></input>
+        <view class="title">姓名</view>
+        <input placeholder="请输入姓名" v-model="name"></input>
       </view>
       <view class="cu-form-group">
         <view class="title">密码</view>
-        <input placeholder="输入密码" v-model="password" type="password"></input>
+        <input placeholder="请输入密码" v-model="password" type="password"></input>
       </view>
+      
+      
       
       <view class="padding flex flex-direction">
         <view class="solid-bottom text-gray margin-bottom-xs">
@@ -62,7 +67,8 @@
         captcha: {},
         // 短信验证码 key 及过期时间
         verificationCode: {},
-				username: '',
+        verification_code: '',
+				name: '',
         password: ''
 			}
 		},
@@ -70,15 +76,15 @@
       ...mapGetters(['isLogged']),
       
       formReady() {
-        return true
         return (
-          this.username.length >= 3 &&
-          this.password.length >= 6
+          this.name.length >= 3 &&
+          this.password.length >= 6 &&
+          this.verificationCode.key
         )
       }
     },
 		methods: {
-      ...mapActions(['login']),
+      ...mapActions(['register']),
       
       resetRegister() {
         this.phone = ''
@@ -100,7 +106,6 @@
         
         await this.$http.post('captchas', {phone: this.phone})
           .then(response => {
-            console.log(response)
             this.captcha = {
               key: response.captcha_key,
               imageContent: response.captcha_image_content,
@@ -129,7 +134,7 @@
              duration: 2000
           })
           
-          this,resetRegister()
+          this.resetRegister()
           return false
         }
         
@@ -156,42 +161,61 @@
         }
       },
       submit() {
+        // 检查验证码是否已发送
+        if (!this.verificationCode.key) {
+          uni.showToast({
+             title: '请先发送验证码',
+             icon: 'none',
+             duration: 2000
+          })
+          return false
+        }
+        // 检查验证码是否已经过期
+        if (new Date().getTime() > this.verificationCode.expiredAt) {
+          uni.showToast({
+             title: '验证码已过期',
+             icon: 'none',
+             duration: 2000
+          })
+          
+          this.resetRegister()
+          return false
+        }
+        
         let params = {
-          username: this.username,
+          verification_code: this.verification_code,
+          verification_key: this.verificationCode.key,
+          name: this.name,
           password: this.password
         }
         
-        this.attempLogin(params)
+        this.attempRegister(params)
       },
-      async attempLogin(params = {}) {
-        // code 只能使用一次，所以每次单独调用
+      async attempRegister(params) {
+        // 参数中增加 code，用户绑定当前用户
         let loginCode = await uni.login({provider: 'weixin'})
         params.code = loginCode[1].code
         
         uni.showLoading({
-            title: '正在登录...'
+          title: '正在保存...'
         })
         
         try {
-          await this.login(params)
+          await this.register(params)
+          
+          uni.hideLoading()
           
           uni.showToast({
-            title: '欢迎回来！',
+            title: '欢迎加入！',
             duration: 2000
           })
-          
-          uni.navigateBack()
         } catch (e) {
-          if (e.status === 401 && params.username) {
-            uni.showToast({
-              title: '用户名或密码错误！',
-              icon: 'none',
-              duration: 2000
-            })
-          }
+          //
         }
         
-        uni.hideLoading()
+        // uni.switchTab({
+        //   url: '/pages/index/index'
+        // });
       }
 		},
     onShow() {
@@ -200,9 +224,6 @@
           url: '/pages/index/index'
         });
       }
-      
-      // 页面打开时判断是否登录，登录直接跳转到首页
-      // this.attempLogin()
     }
 	}
 </script>
