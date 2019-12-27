@@ -14,6 +14,7 @@
             	<view class="solid-bottom text-lg">
             		<text class="text-black">{{ currentUser.name }}</text>
             	</view>
+              <view class="text-cut" style="width:600rpx;display: inline-block;">{{ currentUser.introduction || '' }}</view>
             </view>
           </view>
         </view>
@@ -23,24 +24,31 @@
         <view class="cu-list menu sm-border">
         	<view class="cu-item arrow">
         		<view class="content">
-        			<text class="cuIcon-tagfill text-red  margin-right-xs"></text>
-        			<text class="text-grey">标签</text>
+        			<text class="cuIcon-message  margin-right-xs"></text>
+        			<text class="text-grey">我的消息</text>
         		</view>
         	</view>
           
           <view class="cu-item arrow">
           	<view class="content">
-          		<text class="cuIcon-tagfill text-red  margin-right-xs"></text>
-          		<text class="text-grey">标签</text>
+          		<text class="cuIcon-list margin-right-xs"></text>
+          		<text class="text-grey">我的话题</text>
           	</view>
           </view>
          
           <view class="cu-item arrow">
         		<view class="content">
-        			<text class="cuIcon-tagfill text-red  margin-right-xs"></text>
-        			<text class="text-grey">标签</text>
+        			<text class="cuIcon-edit margin-right-xs"></text>
+        			<text class="text-grey">我的回复</text>
         		</view>
         	</view>
+          
+          <view class="cu-item arrow">
+          	<view class="content">
+          		<text class="cuIcon-settings margin-right-xs"></text>
+          		<text class="text-grey">设置</text>
+          	</view>
+          </view>
         </view>
       </view>
 

@@ -209,13 +209,13 @@
             title: '欢迎加入！',
             duration: 2000
           })
+          
+          uni.switchTab({
+            url: '/pages/index/index'
+          });
         } catch (e) {
           //
         }
-        
-        // uni.switchTab({
-        //   url: '/pages/index/index'
-        // });
       }
 		},
     onShow() {
