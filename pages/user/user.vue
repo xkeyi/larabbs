@@ -14,7 +14,7 @@
             	<view class="solid-bottom text-lg">
             		<text class="text-black">{{ currentUser.name }}</text>
             	</view>
-              <view class="text-cut" style="width:600rpx;display: inline-block;">{{ currentUser.introduction || '' }}</view>
+              <view class="text-cut" style="width:600rpx;display: inline-block; padding-top: 10px;">{{ currentUser.introduction || '' }}</view>
             </view>
           </view>
         </view>
@@ -43,12 +43,12 @@
         		</view>
         	</view>
           
-          <view class="cu-item arrow">
-          	<view class="content">
-          		<text class="cuIcon-settings margin-right-xs"></text>
-          		<text class="text-grey">设置</text>
-          	</view>
-          </view>
+          <navigator  url="/pages/user/edit" class="cu-item arrow">
+            <view class="content">
+              <text class="cuIcon-settings margin-right-xs"></text>
+              <text class="text-grey">编辑资料</text>
+            </view>
+          </navigator>
         </view>
       </view>
 
@@ -61,8 +61,8 @@
       <view class="bg-white">
         <view class="padding">
         	<view class="flex justify-center">
-            <view class="cu-avatar round avatar">
-            	<text class="cuIcon-people text-xsl"></text>
+            <view class="cu-avatar round avatar text-xsl">
+            	<text class="cuIcon-people"></text>
             </view>
         	</view>
         </view>

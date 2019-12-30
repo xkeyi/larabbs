@@ -20,8 +20,14 @@
     },{
       "path" : "pages/auth/register",
        "style" : {
-         "navigationBarTitleText": "注册"
+          "navigationBarTitleText": "注册"
        }
+    }
+    ,{
+      "path" : "pages/user/edit",
+      "style" : {
+        "navigationBarTitleText": "编辑资料"
+      }
     }
   ],
 	"globalStyle": {
