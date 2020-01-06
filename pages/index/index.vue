@@ -1,7 +1,7 @@
 <template>
 	<view>
     <view class="cu-list menu-avatar">
-    	<view v-for="(topic, index) in topics" :key="item.id" class="cu-item">
+    	<view v-for="(topic, index) in topics" :key="topic.id" class="cu-item">
     		<view class="cu-avatar radius lg" :style="[{ backgroundImage:'url(' + topic.user.avatar + ')' }]"></view>
         
     		<view class="content">
@@ -74,14 +74,13 @@
             topic.updated_at_diff = util.diffForHumans(topic.updated_at)
           })
           // 如果传入参数 reset 为true，则覆盖 topics
-          this.topics = reset ? topic : this.topics.concat(topics)
+          this.topics = reset ? topics : this.topics.concat(topics)
           
           // 根据分页设置是否还有更多数据
           if (response.meta.current_page === response.meta.last_page) {
             this.noMoreData = true
           }
         })
-        
         uni.hideLoading()
       },
       async getCategories() {
