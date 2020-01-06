@@ -10,7 +10,7 @@
     			</view>
     			<view class="text-gray text-sm flex">
     				<view class="text-cut">
-              {{ topic.category.name }} •  {{ topic.user.name }} • {{ topic.updated_at }}
+              {{ topic.category.name }} •  {{ topic.user.name }} • {{ topic.updated_at_diff }}
             </view>
            </view>
     		</view>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+  import util from '@/utils/util'
+  
 	export default {
 		data() {
 			return {
@@ -34,11 +36,13 @@
         topics: [],
         // 当前分页
         page: 1,
-        noMoreData: false
+        noMoreData: false,
+        categories: []
 			}
 		},
 		onLoad() {
       this.getTopics()
+      this.getCategories()
 		},
     async onPullDownRefresh() {
       this.page = 1
@@ -66,6 +70,9 @@
         })
         .then(response => {
           let topics = response.data
+          topics.forEach(function (topic) {
+            topic.updated_at_diff = util.diffForHumans(topic.updated_at)
+          })
           // 如果传入参数 reset 为true，则覆盖 topics
           this.topics = reset ? topic : this.topics.concat(topics)
           
@@ -76,6 +83,18 @@
         })
         
         uni.hideLoading()
+      },
+      async getCategories() {
+        // 从缓存中获取分类数据
+        let categories = uni.getStorageSync('categories')
+        if (categories) {
+          this.categories = categories
+        }
+        await this.$http.get('categories')
+          .then(response => {
+            this.categories = response.data
+            uni.setStorageSync('categories', response.data)
+          })
       }
 		}
 	}

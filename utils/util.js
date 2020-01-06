@@ -1,20 +1,11 @@
+import moment from 'moment'
+import 'moment/locale/zh-cn'
 
-// 核对登录
-function checklogin() {
-	// access_token
-	let access_token = uni.getStorageSync('access_token')
-	let access_token_expired_at = uni.getStorageSync('access_token_expired_at')
-	
-	// 用户信息
-	let userinfo = uni.getStorageSync('userinfo')
-  
-	return {
-		access_token,
-		access_token_expired_at,
-		userinfo
-	}
+const diffForHumans = (date, format='YYYYMMDD H:mm:ss') => {
+  moment.locale('zh-cn')
+  return moment(date, format).fromNow()
 }
 
 export default {
-  checklogin
+  diffForHumans
 }
