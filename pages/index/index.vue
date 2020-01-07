@@ -1,5 +1,12 @@
 <template>
 	<view>
+    <view class="bg-white flex solid-bottom padding justify-between" style="border-bottom: 1px solid #CCCCCC;">
+    	<view class="text-lg">{{ currentCategory.name || '话题' }}</view>
+    	<view style="font-size: 26px;">
+        <text class="lg text-gray cuIcon-cascades" @click="categoryTag"></text>
+      </view>
+    </view>
+    
     <view class="cu-list menu-avatar">
     	<view v-for="(topic, index) in topics" :key="topic.id" class="cu-item">
     		<view class="cu-avatar radius lg" :style="[{ backgroundImage:'url(' + topic.user.avatar + ')' }]"></view>
@@ -23,13 +30,27 @@
         <text>没有更多数据了</text>
       </view>
     </view>
+    
+    <uni-drawer :visible="isShowCategories" mode="left" mask="true">
+      <view class="cu-list menu sm-border">
+      	<view v-for="category in categories" :key="category.id" class="cu-item" @click="changeCategory(category.id)">
+      		<view class="content">
+      			<text class="text-grey">{{ category.name }}</text>
+      		</view>
+      	</view>
+      </view>
+    </uni-drawer>
   </view>
 </template>
 
 <script>
+  import uniDrawer from '@/components/uni-drawer/uni-drawer.vue'
   import util from '@/utils/util'
   
 	export default {
+    components: {
+      uniDrawer
+    },
 		data() {
 			return {
 				// 话题数据
@@ -37,9 +58,16 @@
         // 当前分页
         page: 1,
         noMoreData: false,
-        categories: []
+        categories: [],
+        currentCategory: {},
+        isShowCategories: false
 			}
 		},
+    computed: {
+      currentCategoryId() {
+        return this.currentCategory.id || 0
+      }
+    },
 		onLoad() {
       this.getTopics()
       this.getCategories()
@@ -66,10 +94,12 @@
         
         await this.$http.get('topics', {
           page: page,
+          category_id: this.currentCategoryId,
           include: 'user,category'
         })
         .then(response => {
           let topics = response.data
+          console.log(topics)
           topics.forEach(function (topic) {
             topic.updated_at_diff = util.diffForHumans(topic.updated_at)
           })
@@ -94,6 +124,26 @@
             this.categories = response.data
             uni.setStorageSync('categories', response.data)
           })
+      },
+      categoryTag() {
+        this.isShowCategories = !this.isShowCategories
+      },
+      async changeCategory(id = 0) {
+        // 关闭分类列表
+        this.isShowCategories = false
+        // 点击当前分类直接返回
+        if (Number(id) === this.currentCategoryId) {
+          return
+        }
+        
+        // 重置分页和是否有更多数据
+        this.noMoreData = false
+        this.page = 1
+        
+        // 找到选中的分类
+        this.currentCategory = id ? this.categories.find(category => category.id === id) : {}
+        
+        await this.getTopics(1, true)
       }
 		}
 	}
