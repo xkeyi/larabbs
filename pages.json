@@ -23,11 +23,15 @@
        "style" : {
           "navigationBarTitleText": "注册"
        }
-    }
-    ,{
+    },{
       "path" : "pages/user/edit",
       "style" : {
         "navigationBarTitleText": "编辑资料"
+      }
+    },{
+      "path" : "pages/index/show",
+      "style" : {
+        "navigationBarTitleText": "话题详情"
       }
     }
   ],

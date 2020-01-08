@@ -8,7 +8,7 @@
     </view>
     
     <view class="cu-list menu-avatar">
-    	<view v-for="(topic, index) in topics" :key="topic.id" class="cu-item">
+    	<navigator v-for="(topic, index) in topics" :key="topic.id" class="cu-item" :url="'/pages/index/show?id='+topic.id"  hover-class="navigator-hover">
     		<view class="cu-avatar radius lg" :style="[{ backgroundImage:'url(' + topic.user.avatar + ')' }]"></view>
         
     		<view class="content">
@@ -19,12 +19,12 @@
     				<view class="text-cut">
               {{ topic.category.name }} •  {{ topic.user.name }} • {{ topic.updated_at_diff }}
             </view>
-           </view>
+          </view>
     		</view>
     		<view class="action">
     			<view class="cu-tag round bg-grey sm">{{ topic.reply_count }}</view>
     		</view>
-    	</view>
+    	</navigator>
       
       <view class="padding text-gray text-sm text-center" v-if="noMoreData">
         <text>没有更多数据了</text>
@@ -99,7 +99,6 @@
         })
         .then(response => {
           let topics = response.data
-          console.log(topics)
           topics.forEach(function (topic) {
             topic.updated_at_diff = util.diffForHumans(topic.updated_at)
           })
