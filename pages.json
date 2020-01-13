@@ -34,6 +34,13 @@
         "navigationBarTitleText": "话题详情"
       }
     }
+    ,{
+      "path" : "pages/index/userIndex",
+      "style" : {
+        "navigationBarTitleText": "Ta 发布的话题",
+        "enablePullDownRefresh": true
+      }
+    }
   ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

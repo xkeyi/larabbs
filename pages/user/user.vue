@@ -29,12 +29,12 @@
         		</view>
         	</view>
           
-          <view class="cu-item arrow">
+          <navigator :url="'/pages/index/userIndex?user_id=' + currentUser.id" class="cu-item arrow">
           	<view class="content">
           		<text class="cuIcon-list margin-right-xs"></text>
           		<text class="text-grey">我的话题</text>
           	</view>
-          </view>
+          </navigator>
          
           <view class="cu-item arrow">
         		<view class="content">
